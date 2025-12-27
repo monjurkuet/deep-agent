@@ -1,0 +1,50 @@
+# Environment
+.env
+.env.local
+
+# Virtual Environment
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+
+# Data
+data/
+chroma_data/
+test_data/chroma/
+
+# Documentation archives (keep project root clean)
+docs/archive/
+
+# Session logs
+scripts/session-*.md
+
+# Build artifacts (in addition to existing)
+__pycache__/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python-generated files
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
