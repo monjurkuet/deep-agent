@@ -156,9 +156,10 @@ StorageBackend (abstract)
 | Variable | Default | Description |
 |----------|----------|-------------|
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama API endpoint |
-| `OLLAMA_MODEL_PLANNING` | `llama3.1:70b` | Model for planning tasks |
-| `OLLAMA_MODEL_EXECUTION` | `llama3.1:8b` | Model for execution tasks |
-| `OLLAMA_TIMEOUT` | `300` | Request timeout in seconds |
+| `OLLAMA_PLANNING_MODEL_NAME` | `ministral-3:latest` | Model for planning tasks |
+| `OLLAMA_EXECUTION_MODEL_NAME` | `ministral-3:latest` | Model for execution tasks |
+| `OLLAMA_PLANNING_TEMPERATURE` | `0.7` | Temperature for planning (higher creativity) |
+| `OLLAMA_EXECUTION_TEMPERATURE` | `0.0` | Temperature for execution (more deterministic) |
 | `LOG_LEVEL` | `INFO` | Logging verbosity |
 
 ## Error Handling

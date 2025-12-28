@@ -10,12 +10,7 @@ from deep_agent.config.models import (
     AgentConfig,
     ModelConfig,
 )
-from deep_agent.config.constants import (
-    DEFAULT_AGENT_CONFIG,
-    DEFAULT_EXECUTION_MODEL,
-    DEFAULT_PLANNING_MODEL,
-    DEFAULT_SYSTEM_PROMPT,
-)
+from deep_agent.config.constants import DEFAULT_SYSTEM_PROMPT
 
 __all__ = [
     "Settings",
@@ -24,8 +19,5 @@ __all__ = [
     "BackendConfig",
     "LoggingConfig",
     "ModelConfig",
-    "DEFAULT_AGENT_CONFIG",
-    "DEFAULT_PLANNING_MODEL",
-    "DEFAULT_EXECUTION_MODEL",
     "DEFAULT_SYSTEM_PROMPT",
 ]

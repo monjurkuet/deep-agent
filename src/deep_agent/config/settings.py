@@ -3,16 +3,19 @@ Configuration management using Pydantic settings.
 Loads from environment variables with validation.
 """
 
+from typing import Optional
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class OllamaConfig(BaseModel):
-    """Ollama model configuration."""
-
     base_url: str = "http://localhost:11434"
-    planning_model: str = "ministral-3:latest"
-    execution_model: str = "ministral-3:latest"
+
+    planning_model_name: str = "ministral-3:latest"
+    planning_temperature: float = 0.7
+
+    execution_model_name: str = "ministral-3:latest"
+    execution_temperature: float = 0.0
     timeout: int = 300
     temperature_planning: float = 0.0
     temperature_execution: float = 0.1
@@ -23,6 +26,7 @@ class BackendConfig(BaseModel):
 
     type: str = "state"
     persist_directory: str = "./data/chroma"
+    routes: Optional[dict] = None
 
 
 class LoggingConfig(BaseModel):

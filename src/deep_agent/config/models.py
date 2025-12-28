@@ -6,8 +6,6 @@ from pydantic import BaseModel, Field
 
 
 class ModelConfig(BaseModel):
-    """LLM model configuration."""
-
     provider: str = "ollama"
     model_name: str
     temperature: float = 0.0

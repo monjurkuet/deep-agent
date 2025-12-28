@@ -2,8 +2,6 @@
 Application constants and default values.
 """
 
-from deep_agent.config.models import AgentConfig, ModelConfig
-
 # System prompts
 DEFAULT_SYSTEM_PROMPT = """You are a research assistant with access to a file system.
 
@@ -19,26 +17,3 @@ DEFAULT_SYSTEM_PROMPT = """You are a research assistant with access to a file sy
 
 Start by creating a plan using write_todos, then execute it step by step.
 """
-
-# Default model configurations
-DEFAULT_PLANNING_MODEL = ModelConfig(
-    provider="ollama",
-    model_name="ministral-3:latest",
-    temperature=0.0,
-    timeout=300,
-)
-
-DEFAULT_EXECUTION_MODEL = ModelConfig(
-    provider="ollama",
-    model_name="ministral-3:latest",
-    temperature=0.1,
-    timeout=300,
-)
-
-# Default agent configuration
-DEFAULT_AGENT_CONFIG = AgentConfig(
-    model=DEFAULT_PLANNING_MODEL,
-    system_prompt=DEFAULT_SYSTEM_PROMPT,
-    checkpointer_enabled=True,
-    backend_type="state",
-)

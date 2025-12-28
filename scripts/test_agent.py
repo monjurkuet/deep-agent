@@ -17,8 +17,10 @@ def main():
 
     settings = Settings()
     print(f"\nConfiguration:")
-    print(f"  Planning Model: {settings.ollama.planning_model}")
-    print(f"  Execution Model: {settings.ollama.execution_model}")
+    print(f"  Planning Model: {settings.ollama.planning_model_name}")
+    print(f"  Planning Temperature: {settings.ollama.planning_temperature}")
+    print(f"  Execution Model: {settings.ollama.execution_model_name}")
+    print(f"  Execution Temperature: {settings.ollama.execution_temperature}")
     print(f"  Ollama URL: {settings.ollama.base_url}")
     print(f"  Backend Type: {settings.backend.type}")
 

@@ -2,15 +2,16 @@
 Agent factory and initialization logic.
 """
 
-import uuid
 from typing import Optional
+import uuid
 from langchain_ollama import ChatOllama
 from langgraph.checkpoint.memory import MemorySaver
+from langgraph.store.memory import InMemoryStore
 from deepagents import create_deep_agent
-from deepagents.backends import StateBackend
+from deepagents.backends import StateBackend, StoreBackend, CompositeBackend
 from deep_agent.config.settings import Settings
 from deep_agent.config.models import AgentConfig, ModelConfig
-from deep_agent.config.constants import DEFAULT_AGENT_CONFIG
+from deep_agent.config.constants import DEFAULT_SYSTEM_PROMPT
 from deep_agent.core.exceptions import ModelError, ConfigurationError
 from deep_agent.utils.logging import setup_logging
 from deep_agent.tools.registry import get_available_tools
@@ -40,17 +41,32 @@ class AgentFactory:
         except Exception as e:
             raise ModelError(f"Failed to create model: {e}")
 
-    def _create_backend(self):
-        """Create filesystem backend based on configuration."""
+    def _create_backend_factory(self):
+        """Create a backend factory based on configuration."""
         backend_type = self.settings.backend.type
+        routes = self.settings.backend.routes
 
-        if backend_type == "state":
+        if routes and backend_type == "composite":
 
             def backend_factory(runtime):
-                return StateBackend(runtime)
+                backend = CompositeBackend(
+                    default=StateBackend(runtime),
+                    routes={"/memories/": StoreBackend(runtime), **routes},
+                )
+                logger.info(f"Created CompositeBackend with routes: {list(routes.keys())}")
+                return backend
 
-            logger.debug("Using StateBackend for filesystem")
             return backend_factory
+
+        elif backend_type == "state":
+
+            def backend_factory(runtime):
+                backend = StateBackend(runtime)
+                logger.debug("Using StateBackend for filesystem")
+                return backend
+
+            return backend_factory
+
         else:
             raise ConfigurationError(f"Unsupported backend type: {backend_type}")
 
@@ -59,34 +75,52 @@ class AgentFactory:
         config: Optional[AgentConfig] = None,
     ):
         """Create a Deep Agent with specified configuration."""
-        config = config or DEFAULT_AGENT_CONFIG
 
         try:
-            # Create model
-            model = self._create_model(config.model)
+            # Create model from settings
+            if config and config.model:
+                model_config = config.model
+            else:
+                model_config = ModelConfig(
+                    provider="ollama",
+                    model_name=self.settings.ollama.execution_model_name,
+                    temperature=self.settings.ollama.execution_temperature,
+                )
 
-            # Create backend
-            backend = self._create_backend()
-
-            # Get custom tools
-            custom_tools = get_available_tools()
-            logger.info(
-                f"Loaded {len(custom_tools)} custom tools: {[t.name for t in custom_tools]}"
-            )
+            model = self._create_model(model_config)
 
             # Create checkpointer
             checkpointer = None
-            if config.checkpointer_enabled:
+            checkpointer_enabled = config.checkpointer_enabled if config else True
+            if checkpointer_enabled:
                 checkpointer = MemorySaver()
                 logger.debug("Enabled checkpointer with MemorySaver")
 
-            agent = create_deep_agent(
-                model=model,
-                system_prompt=config.system_prompt,
-                backend=backend,
-                checkpointer=checkpointer,
-                tools=custom_tools,
-            )
+            # Create store for composite backend
+            store = None
+            if self.settings.backend.routes and self.settings.backend.type == "composite":
+                store = InMemoryStore()
+                logger.info("Created InMemoryStore for composite backend")
+
+            # Get custom tools
+            custom_tools = get_available_tools()
+            tool_names = [t.name if hasattr(t, "name") else t.__name__ for t in custom_tools]
+            logger.info(f"Loaded {len(custom_tools)} custom tools: {tool_names}")
+
+            # Create agent
+            agent_kwargs = {
+                "model": model,
+                "system_prompt": config.system_prompt if config else DEFAULT_SYSTEM_PROMPT,
+                "backend": self._create_backend_factory(),
+                "checkpointer": checkpointer,
+                "tools": custom_tools,
+            }
+
+            if store is not None:
+                agent_kwargs["store"] = store
+                logger.info("Added store to agent for long-term memory")
+
+            agent = create_deep_agent(**agent_kwargs)
 
             logger.info("Deep Agent created successfully")
             return agent

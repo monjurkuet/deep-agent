@@ -287,9 +287,10 @@ Phase 1 is **complete and working**. You can:
 ```bash
 # .env (already configured)
 OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL_PLANNING=ministral-3:latest
-OLLAMA_MODEL_EXECUTION=ministral-3:latest
-OLLAMA_TIMEOUT=300
+OLLAMA_PLANNING_MODEL_NAME=ministral-3:latest
+OLLAMA_EXECUTION_MODEL_NAME=ministral-3:latest
+OLLAMA_PLANNING_TEMPERATURE=0.7
+OLLAMA_EXECUTION_TEMPERATURE=0.0
 LOG_LEVEL=INFO
 ```
 

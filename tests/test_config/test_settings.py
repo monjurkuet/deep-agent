@@ -10,8 +10,10 @@ def test_default_settings():
     settings = Settings()
 
     assert settings.ollama.base_url == "http://localhost:11434"
-    assert settings.ollama.planning_model == "ministral-3:latest"
-    assert settings.ollama.execution_model == "ministral-3:latest"
+    assert settings.ollama.planning_model_name == "ministral-3:latest"
+    assert settings.ollama.execution_model_name == "ministral-3:latest"
+    assert settings.ollama.planning_temperature == 0.7
+    assert settings.ollama.execution_temperature == 0.0
     assert settings.backend.type == "state"
     assert settings.logging_config.level == "INFO"
 
