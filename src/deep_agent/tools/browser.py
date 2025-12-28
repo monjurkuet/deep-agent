@@ -5,6 +5,8 @@ Browser tools using Playwright for web automation.
 from langchain_community.agent_toolkits.playwright import PlayWrightBrowserToolkit
 from langchain_community.tools.playwright.utils import create_async_playwright_browser
 from loguru import logger
+import asyncio
+import nest_asyncio
 
 
 def get_browser_tools():
@@ -37,6 +39,3 @@ def get_browser_tools():
         except Exception as e:
             logger.error(f"Failed to initialize browser tools: {e}")
             return []
-    except Exception:
-        logger.error("Unexpected error during browser initialization")
-        return []
